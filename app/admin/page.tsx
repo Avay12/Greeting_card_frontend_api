@@ -18,10 +18,10 @@ export default function AdminDashboardPage() {
   }, [fetchUsers, fetchOrders, fetchCards]);
 
   const stats = [
-    { label: "Total Users", value: users.length.toString(), icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
-    { label: "Total Orders", value: orders.length.toString(), icon: ShoppingBag, color: "text-green-600", bg: "bg-green-100" },
-    { label: "Available Cards", value: cards.length.toString(), icon: CopyPlus, color: "text-purple-600", bg: "bg-purple-100" },
-    { label: "Revenue", value: `$${orders.reduce((acc, order) => acc + (order.TotalAmount || 0), 0).toFixed(2)}`, icon: Wand2, color: "text-orange-600", bg: "bg-orange-100" },
+    { label: "Total Users", value: (users || []).length.toString(), icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
+    { label: "Total Orders", value: (orders || []).length.toString(), icon: ShoppingBag, color: "text-green-600", bg: "bg-green-100" },
+    { label: "Available Cards", value: (cards || []).length.toString(), icon: CopyPlus, color: "text-purple-600", bg: "bg-purple-100" },
+    { label: "Revenue", value: `$${(orders || []).reduce((acc, order) => acc + (order.TotalAmount || 0), 0).toFixed(2)}`, icon: Wand2, color: "text-orange-600", bg: "bg-orange-100" },
   ];
 
   return (

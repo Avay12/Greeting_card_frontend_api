@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Outfit } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import SearchModal from "@/components/SearchModal";
 import { cn } from "@/lib/utils";
 
 const geistSans = Geist({
@@ -34,19 +31,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={cn(
           geistSans.variable,
           geistMono.variable,
           outfit.variable,
-          "min-h-screen flex flex-col"
+          "min-h-screen flex flex-col bg-gray-50"
         )}
       >
-        <SearchModal />
-        <Navbar />
-        <main className="flex-1 pt-24 pb-16">
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

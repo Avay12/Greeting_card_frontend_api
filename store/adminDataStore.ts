@@ -50,7 +50,8 @@ export const useAdminDataStore = create<AdminDataState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await api.get("/admin/users");
-      set({ users: response.data.users, isLoading: false });
+      const data = response.data;
+      set({ users: data.users || (Array.isArray(data) ? data : []), isLoading: false });
     } catch (error: any) {
       set({ error: error.message || "Failed to fetch users", isLoading: false });
     }
@@ -60,7 +61,8 @@ export const useAdminDataStore = create<AdminDataState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await api.get("/admin/orders");
-      set({ orders: response.data.orders, isLoading: false });
+      const data = response.data;
+      set({ orders: data.orders || (Array.isArray(data) ? data : []), isLoading: false });
     } catch (error: any) {
       set({ error: error.message || "Failed to fetch orders", isLoading: false });
     }
@@ -70,7 +72,8 @@ export const useAdminDataStore = create<AdminDataState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await api.get("/cards"); // existing public route
-      set({ cards: response.data.cards, isLoading: false });
+      const data = response.data;
+      set({ cards: data.cards || (Array.isArray(data) ? data : []), isLoading: false });
     } catch (error: any) {
       set({ error: error.message || "Failed to fetch cards", isLoading: false });
     }

@@ -27,7 +27,10 @@ export default function Navbar() {
 
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
+    setIsMounted(true);
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
@@ -102,7 +105,7 @@ export default function Navbar() {
             className="p-2 text-foreground/80 hover:text-primary transition-colors hidden sm:block relative"
           >
             <Heart className="w-5 h-5" />
-            {favorites.length > 0 && (
+            {isMounted && favorites.length > 0 && (
               <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
                 {favorites.length}
               </span>
@@ -113,7 +116,7 @@ export default function Navbar() {
             className="p-2 text-foreground/80 hover:text-primary transition-colors relative"
           >
             <ShoppingBag className="w-5 h-5" />
-            {cartItemCount > 0 && (
+            {isMounted && cartItemCount > 0 && (
               <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
                 {cartItemCount}
               </span>

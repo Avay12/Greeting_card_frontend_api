@@ -76,7 +76,9 @@ export default function AdminLayout({
         } flex flex-col`}
       >
         <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
-          <span className="text-xl font-bold text-primary font-heading">Admin Panel</span>
+          <span className="text-xl font-bold font-heading tracking-wide text-gray-900">
+            Greeting<span className="ml-2 text-primary">Admin</span>
+          </span>
           <button 
             className="lg:hidden text-gray-500 hover:text-gray-700"
             onClick={() => setIsSidebarOpen(false)}
@@ -134,7 +136,6 @@ export default function AdminLayout({
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Mobile Header */}
         <header className="lg:hidden h-16 bg-white border-b border-gray-200 flex items-center px-4">
           <button
             onClick={() => setIsSidebarOpen(true)}
@@ -142,7 +143,9 @@ export default function AdminLayout({
           >
             <Menu className="w-6 h-6" />
           </button>
-          <span className="ml-4 text-lg font-semibold text-gray-900">Admin Dashboard</span>
+          <span className="ml-4 text-lg font-bold font-heading tracking-wide text-gray-900">
+            Greeting<span className="text-primary">Admin</span>
+          </span>
         </header>
 
         <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
