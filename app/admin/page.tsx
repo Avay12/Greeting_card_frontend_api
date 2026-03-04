@@ -9,7 +9,8 @@ import Link from "next/link";
 
 export default function AdminDashboardPage() {
   const { user } = useAuthStore();
-  const { users, orders, cards, fetchUsers, fetchOrders, fetchCards } = useAdminDataStore();
+  const { users, orders, cards, fetchUsers, fetchOrders, fetchCards } =
+    useAdminDataStore();
 
   useEffect(() => {
     fetchUsers();
@@ -18,10 +19,34 @@ export default function AdminDashboardPage() {
   }, [fetchUsers, fetchOrders, fetchCards]);
 
   const stats = [
-    { label: "Total Users", value: users.length.toString(), icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
-    { label: "Total Orders", value: orders.length.toString(), icon: ShoppingBag, color: "text-green-600", bg: "bg-green-100" },
-    { label: "Available Cards", value: cards.length.toString(), icon: CopyPlus, color: "text-purple-600", bg: "bg-purple-100" },
-    { label: "Revenue", value: `$${orders.reduce((acc, order) => acc + (order.TotalAmount || 0), 0).toFixed(2)}`, icon: Wand2, color: "text-orange-600", bg: "bg-orange-100" },
+    {
+      label: "Total Users",
+      value: users?.length.toString(),
+      icon: Users,
+      color: "text-blue-600",
+      bg: "bg-blue-100",
+    },
+    {
+      label: "Total Orders",
+      value: orders?.length.toString(),
+      icon: ShoppingBag,
+      color: "text-green-600",
+      bg: "bg-green-100",
+    },
+    {
+      label: "Available Cards",
+      value: cards?.length.toString(),
+      icon: CopyPlus,
+      color: "text-purple-600",
+      bg: "bg-purple-100",
+    },
+    {
+      label: "Revenue",
+      value: `$${orders?.reduce((acc, order) => acc + (order.TotalAmount || 0), 0).toFixed(2)}`,
+      icon: Wand2,
+      color: "text-orange-600",
+      bg: "bg-orange-100",
+    },
   ];
 
   return (
@@ -64,9 +89,11 @@ export default function AdminDashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 font-heading">Quick Actions</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4 font-heading">
+            Quick Actions
+          </h2>
           <div className="grid grid-cols-2 gap-4">
-            <Link 
+            <Link
               href="/admin/cards/create"
               className="group flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl hover:bg-primary/5 border border-transparent hover:border-primary/20 transition-all"
             >
@@ -75,8 +102,8 @@ export default function AdminDashboardPage() {
               </div>
               <span className="font-medium text-gray-900">New Card</span>
             </Link>
-            
-            <Link 
+
+            <Link
               href="/admin/links/create"
               className="group flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl hover:bg-secondary/5 border border-transparent hover:border-secondary/20 transition-all"
             >
@@ -89,11 +116,13 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-           <h2 className="text-xl font-bold text-gray-900 mb-4 font-heading">Recent Activity</h2>
-           <div className="flex flex-col items-center justify-center h-48 text-gray-500 space-y-3">
-              <Wand2 className="w-8 h-8 opacity-50" />
-              <p>No recent activity yet.</p>
-           </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-4 font-heading">
+            Recent Activity
+          </h2>
+          <div className="flex flex-col items-center justify-center h-48 text-gray-500 space-y-3">
+            <Wand2 className="w-8 h-8 opacity-50" />
+            <p>No recent activity yet.</p>
+          </div>
         </div>
       </div>
     </div>
