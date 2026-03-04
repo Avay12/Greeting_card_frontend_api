@@ -1,7 +1,10 @@
+import { TEMPLATE_COMPONENTS } from "@/components/templates";
+
 export interface TemplateMetadata {
   id: string;
   name: string;
-  image: string;
+  image?: string;
+  component?: React.ComponentType<any>;
   description: string;
   price: number;
   fields: string[];
@@ -13,7 +16,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "annv-001": {
       id: "annv-001",
       name: "Golden Elegance",
-      image: "/images/templates/anniversary/annv-001.png",
+      component: TEMPLATE_COMPONENTS["annv-001"],
       description:
         "A classic golden themed anniversary card with elegant typography.",
       price: 15.0,
@@ -27,7 +30,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "annv-002": {
       id: "annv-002",
       name: "Modern Minimalist",
-      image: "/images/templates/anniversary/annv-002.png",
+      component: TEMPLATE_COMPONENTS["annv-002"],
       description:
         "Clean lines and modern fonts for a sophisticated celebration.",
       price: 12.0,
@@ -43,7 +46,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "val-001": {
       id: "val-001",
       name: "Romantic Roses",
-      image: "/images/templates/valentine/val-001.png",
+      component: TEMPLATE_COMPONENTS["val-001"],
       description: "Deep red roses and gold accents for your special someone.",
       price: 18.0,
       fields: ["name", "message"],
@@ -58,7 +61,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "wed-001": {
       id: "wed-001",
       name: "Classic White",
-      image: "/images/templates/wedding/wed-001.png",
+      component: TEMPLATE_COMPONENTS["wed-001"],
       description: "Timeless white and silver invitation for a perfect day.",
       price: 25.0,
       fields: ["names", "date", "time", "location", "venue", "city"],
@@ -76,7 +79,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "bday-001": {
       id: "bday-001",
       name: "Party Popper",
-      image: "/images/templates/birthday/bday-001.png",
+      component: TEMPLATE_COMPONENTS["bday-001"],
       description: "vibrant colors and confetti to celebrate a fun birthday.",
       price: 10.0,
       fields: ["name", "age", "message"],
@@ -92,7 +95,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "ty-001": {
       id: "ty-001",
       name: "Botanical Gratitude",
-      image: "/images/templates/thank_you/ty-001.png",
+      component: TEMPLATE_COMPONENTS["ty-001"],
       description: "Natural eucalyptus branch for a thoughtful thank you.",
       price: 8.0,
       fields: ["name", "message"],
@@ -106,7 +109,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "cong-001": {
       id: "cong-001",
       name: "Golden Success",
-      image: "/images/templates/congratulations/cong-001.png",
+      component: TEMPLATE_COMPONENTS["cong-001"],
       description: "Sparkling gold elements for a major achievement.",
       price: 14.0,
       fields: ["name", "achievement", "message"],
@@ -121,7 +124,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "sea-001": {
       id: "sea-001",
       name: "Winter Wonderland",
-      image: "/images/templates/seasonal/sea-001.png",
+      component: TEMPLATE_COMPONENTS["sea-001"],
       description: "Snowy pines and a warm seasonal message.",
       price: 12.0,
       fields: ["season", "message"],
@@ -136,7 +139,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "baby-001": {
       id: "baby-001",
       name: "Sweet Arrival",
-      image: "/images/templates/baby_shower/baby-001.png",
+      component: TEMPLATE_COMPONENTS["baby-001"],
       description: "Soft pastels and cute nursery illustrations.",
       price: 15.0,
       fields: ["name", "parents", "date", "time", "location"],
@@ -153,7 +156,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "grad-001": {
       id: "grad-001",
       name: "Next Adventure",
-      image: "/images/templates/graduation/grad-001.png",
+      component: TEMPLATE_COMPONENTS["grad-001"],
       description: "Bold fonts for a bright and successful future.",
       price: 13.0,
       fields: ["name", "degree", "classYear", "message"],
@@ -169,7 +172,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
     "symp-001": {
       id: "symp-001",
       name: "Quiet Moments",
-      image: "/images/templates/sympathy/symp-001.png",
+      component: TEMPLATE_COMPONENTS["symp-001"],
       description: "Muted tones and calming imagery for support.",
       price: 9.0,
       fields: ["name", "message"],

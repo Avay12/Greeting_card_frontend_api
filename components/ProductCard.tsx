@@ -7,12 +7,20 @@ import { cn } from "@/lib/utils";
 import { Heart, ShoppingCart, Check } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { useState } from "react";
+import { TEMPLATES } from "@/lib/data/template";
+
+// Flat mapping for easy lookup
+const TEMPLATES_DATA = Object.values(TEMPLATES).reduce(
+  (acc, cat) => ({ ...acc, ...cat }),
+  {} as Record<string, any>,
+);
 
 export interface Product {
   id: string;
   title: string;
   price: number;
-  image: string;
+  image?: string;
+  component?: React.ComponentType<any>;
   category: string;
   isBestseller?: boolean;
   isNew?: boolean;
@@ -41,7 +49,7 @@ export default function ProductCard({
       id: product.id,
       name: product.title,
       price: product.price,
-      image: product.image,
+      image: product.image || "",
       category: product.category,
     });
     setIsAdded(true);
@@ -88,13 +96,29 @@ export default function ProductCard({
           )}
         </div>
 
-        <Image
-          src={product.image}
-          alt={product.title}
-          fill
-          className="object-cover transform group-hover:scale-105 transition-transform duration-700"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
+        {product.component ? (
+          <div className="absolute inset-0 bg-[#fafafa] overflow-hidden flex items-center justify-center group-hover:bg-white transition-colors duration-700">
+            <div className="w-[480px] pointer-events-none transform scale-[0.4] sm:scale-[0.45] lg:scale-[0.5] origin-center transition-transform duration-700 group-hover:scale-[0.45] sm:group-hover:scale-[0.5] lg:group-hover:scale-[0.55]">
+              <product.component
+                {...(TEMPLATES_DATA[product.id]?.defaults || {})}
+              />
+            </div>
+            {/* Subtle overlay to soften the preview */}
+            <div className="absolute inset-0 bg-black/[0.02] pointer-events-none" />
+          </div>
+        ) : product.image ? (
+          <Image
+            src={product.image}
+            alt={product.title}
+            fill
+            className="object-cover transform group-hover:scale-105 transition-transform duration-700"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-muted flex items-center justify-center">
+            <span className="text-muted-foreground text-sm">No Preview</span>
+          </div>
+        )}
 
         {/* Action Buttons Overlay */}
         <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 opacity-0 translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">

@@ -66,7 +66,7 @@ export default function ProductPage() {
       id: productData.id,
       name: productData.name,
       price: productData.price,
-      image: productData.image,
+      image: productData.image || "",
       category: productData.category,
     });
 
@@ -141,7 +141,7 @@ export default function ProductPage() {
                   ) : (
                     <div className="w-full h-full bg-muted rounded-[3rem] flex items-center justify-center border-8 border-white shadow-2xl overflow-hidden">
                       <Image
-                        src={productData.image}
+                        src={productData.image || ""}
                         alt={productData.name}
                         fill
                         className="object-cover"

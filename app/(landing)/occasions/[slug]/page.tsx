@@ -7,11 +7,20 @@ import Link from "next/link";
 import { ArrowLeft, SlidersHorizontal, LayoutGrid, List } from "lucide-react";
 import { TEMPLATES } from "@/lib/data/template";
 import { useState } from "react";
+import CustomSelect from "@/components/common/CustomSelect";
 
 export default function CategoryPage() {
   const params = useParams();
   const slug = params.slug as string;
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState("featured");
+
+  const sortOptions = [
+    { value: "featured", label: "Sort by: Featured" },
+    { value: "price-low", label: "Price: Low to High" },
+    { value: "price-high", label: "Price: High to Low" },
+    { value: "newest", label: "Newest Arrivals" },
+  ];
 
   const categoryName = slug
     ? slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
@@ -25,6 +34,7 @@ export default function CategoryPage() {
       title: template.name,
       price: template.price,
       image: template.image,
+      component: template.component,
       category: categoryName,
       isNew: true, // For now, mark templates as new
     }),
@@ -81,12 +91,13 @@ export default function CategoryPage() {
             <button className="flex items-center gap-2 px-6 py-2.5 bg-white border border-black/5 rounded-2xl text-sm font-bold hover:bg-muted transition-all shadow-sm">
               <SlidersHorizontal className="w-4 h-4" /> Filter
             </button>
-            <select className="px-6 py-2.5 bg-white border border-black/5 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary/20 outline-none shadow-sm cursor-pointer">
-              <option>Sort by: Featured</option>
-              <option>Price: Low to High</option>
-              <option>Price: High to Low</option>
-              <option>Newest Arrivals</option>
-            </select>
+
+            <CustomSelect
+              options={sortOptions}
+              value={sortBy}
+              onChange={setSortBy}
+              className="w-56"
+            />
           </motion.div>
         </div>
       </div>

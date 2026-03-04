@@ -22,6 +22,7 @@ export default function Home() {
           title: t.name,
           price: t.price,
           image: t.image,
+          component: t.component,
           category: category
             .replace(/-/g, " ")
             .replace(/\b\w/g, (c) => c.toUpperCase()),
