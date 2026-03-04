@@ -106,28 +106,32 @@ export default function Navbar() {
           >
             <Search className="w-5 h-5" />
           </button>
-          <Link
-            href="/favorites"
-            className="p-2 text-foreground/80 hover:text-primary transition-colors hidden sm:block relative"
-          >
-            <Heart className="w-5 h-5" />
-            {isMounted && favorites.length > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
-                {favorites.length}
-              </span>
-            )}
-          </Link>
-          <Link
-            href="/cart"
-            className="p-2 text-foreground/80 hover:text-primary transition-colors relative"
-          >
-            <ShoppingBag className="w-5 h-5" />
-            {isMounted && cartItemCount > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
-                {cartItemCount}
-              </span>
-            )}
-          </Link>
+          {isMounted && user && (
+            <>
+              <Link
+                href="/favorites"
+                className="p-2 text-foreground/80 hover:text-primary transition-colors hidden sm:block relative"
+              >
+                <Heart className="w-5 h-5" />
+                {favorites.length > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
+                    {favorites.length}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/cart"
+                className="p-2 text-foreground/80 hover:text-primary transition-colors relative"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                {cartItemCount > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Link>
+            </>
+          )}
 
           {/* User Auth */}
           {user ? (
@@ -225,6 +229,30 @@ export default function Navbar() {
                     >
                       <UserIcon className="w-4 h-4" /> My Dashboard ({user.name}
                       )
+                    </Link>
+                    <Link
+                      href="/favorites"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 text-sm font-medium text-foreground/80 py-2"
+                    >
+                      <Heart className="w-4 h-4" /> Favorites
+                      {favorites.length > 0 && (
+                        <span className="ml-auto text-xs font-bold bg-primary text-white rounded-full px-1.5 py-0.5">
+                          {favorites.length}
+                        </span>
+                      )}
+                    </Link>
+                    <Link
+                      href="/cart"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 text-sm font-medium text-foreground/80 py-2"
+                    >
+                      <ShoppingBag className="w-4 h-4" /> Cart
+                      {cartItemCount > 0 && (
+                        <span className="ml-auto text-xs font-bold bg-primary text-white rounded-full px-1.5 py-0.5">
+                          {cartItemCount}
+                        </span>
+                      )}
                     </Link>
                     <button
                       onClick={() => {
