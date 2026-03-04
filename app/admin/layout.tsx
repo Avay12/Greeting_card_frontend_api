@@ -81,9 +81,9 @@ export default function AdminLayout({
             <Image
               src="/logo.png"
               alt="Logo"
-              width={24}
-              height={24}
-              className="w-6 h-6 object-contain"
+              width={50}
+              height={50}
+              className="w-12 h-12 object-contain"
             />
             <span className="text-xl font-bold font-heading tracking-wide text-gray-900">
               Greeting<span className="ml-1 text-primary">Admin</span>

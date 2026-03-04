@@ -72,11 +72,11 @@ function LoginForm() {
           </Link>
           <div className="flex justify-center mb-6">
             <Image
-              src="/logo.png"
+              src="/logo-horizontal.png"
               alt="Joy Greetly"
-              width={64}
-              height={64}
-              className="w-16 h-16 object-contain"
+              width={100}
+              height={50}
+              className="w-24 object-contain"
             />
           </div>
 
