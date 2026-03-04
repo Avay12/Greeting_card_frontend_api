@@ -15,17 +15,28 @@ export interface AdminOrder {
   User: AdminUser;
   TotalAmount: number;
   Status: string;
-  Items: any[]; // Expand as needed
+  Items: any[];
   CreatedAt: string;
 }
 
+// Matches the backend models.Card JSON output (snake_case JSON tags)
 export interface AdminCard {
   id: number;
-  Title: string;
-  Category: string; // Add back if removed from model or use Occasion
-  ImageURL: string;
-  Price: number;
-  CreatedAt: string;
+  template_id: string;
+  title: string;
+  description: string;
+  image_url: string;
+  occasion: string;
+  price: number;
+  custom_data: string; // JSON string of personalisation fields
+  user_id: number;
+  User?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  created_at: string;
+  updated_at: string;
 }
 
 interface AdminDataState {
@@ -45,15 +56,21 @@ export const useAdminDataStore = create<AdminDataState>((set) => ({
   cards: [],
   isLoading: false,
   error: null,
-  
+
   fetchUsers: async () => {
     set({ isLoading: true, error: null });
     try {
       const response = await api.get("/admin/users");
       const data = response.data;
-      set({ users: data.users || (Array.isArray(data) ? data : []), isLoading: false });
+      set({
+        users: data.users || (Array.isArray(data) ? data : []),
+        isLoading: false,
+      });
     } catch (error: any) {
-      set({ error: error.message || "Failed to fetch users", isLoading: false });
+      set({
+        error: error.message || "Failed to fetch users",
+        isLoading: false,
+      });
     }
   },
 
@@ -62,20 +79,33 @@ export const useAdminDataStore = create<AdminDataState>((set) => ({
     try {
       const response = await api.get("/admin/orders");
       const data = response.data;
-      set({ orders: data.orders || (Array.isArray(data) ? data : []), isLoading: false });
+      set({
+        orders: data.orders || (Array.isArray(data) ? data : []),
+        isLoading: false,
+      });
     } catch (error: any) {
-      set({ error: error.message || "Failed to fetch orders", isLoading: false });
+      set({
+        error: error.message || "Failed to fetch orders",
+        isLoading: false,
+      });
     }
   },
 
+  // Admin endpoint returns ALL users' cards
   fetchCards: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.get("/cards"); // existing public route
+      const response = await api.get("/admin/cards");
       const data = response.data;
-      set({ cards: data.cards || (Array.isArray(data) ? data : []), isLoading: false });
+      set({
+        cards: data.cards || (Array.isArray(data) ? data : []),
+        isLoading: false,
+      });
     } catch (error: any) {
-      set({ error: error.message || "Failed to fetch cards", isLoading: false });
+      set({
+        error: error.message || "Failed to fetch cards",
+        isLoading: false,
+      });
     }
-  }
+  },
 }));
