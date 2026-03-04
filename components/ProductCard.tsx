@@ -15,6 +15,7 @@ export interface Product {
   image: string;
   category: string;
   isBestseller?: boolean;
+  isNew?: boolean;
 }
 
 interface ProductCardProps {
