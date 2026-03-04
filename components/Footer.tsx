@@ -46,15 +46,15 @@ export default function Footer() {
               className="flex items-center gap-2 mb-4 group inline-flex"
             >
               <Image
-                src="/logo.png"
+                src="/logo-horizontal.png"
                 alt="Joy Greetly"
-                width={32}
-                height={32}
-                className="w-8 h-8 object-contain"
+                width={100}
+                height={50}
+                className="w-24 object-contain"
               />
-              <span className="font-heading font-bold text-xl tracking-tight text-foreground">
+              {/* <span className="font-heading font-bold text-xl tracking-tight text-foreground">
                 Joy<span className="text-primary">Greetly</span>
-              </span>
+              </span> */}
             </Link>
             <p className="text-sm max-w-xs mb-6">
               Share smiles and celebrate special moments with our premium,

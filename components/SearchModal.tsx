@@ -1,49 +1,178 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ArrowRight } from "lucide-react";
+import { Search, X, ArrowRight, Sparkles, Tag } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import Link from "next/link";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { TEMPLATES } from "@/lib/data/template";
 
-// Placeholder data for search suggestions
-const SUGGESTIONS = [
-  {
-    id: "1",
-    name: "Floral Birthday Card",
-    price: 12.99,
-    image: "/images/products/birthday.png",
-    category: "Birthday",
-  },
-  {
-    id: "2",
-    name: "Wedding Bells Invitation",
-    price: 15.0,
-    image: "/images/products/wedding.png",
-    category: "Wedding",
-  },
-  {
-    id: "3",
-    name: "Thank You Botanical",
-    price: 8.5,
-    image: "/images/products/thankyou.png",
-    category: "Thank You",
-  },
+// ─── Build a flat, searchable list of occasions + templates ──────────────────
+
+interface SearchItem {
+  type: "occasion" | "template";
+  occasionSlug: string;
+  occasionLabel: string;
+  id?: string;
+  name?: string;
+  description?: string;
+  price?: number;
+  href: string;
+  emoji: string;
+}
+
+const OCCASION_EMOJIS: Record<string, string> = {
+  anniversary: "💍",
+  valentine: "❤️",
+  wedding: "💒",
+  birthday: "🎂",
+  "thank-you": "🙏",
+  congratulations: "🎉",
+  seasonal: "🍂",
+  "baby-shower": "🍼",
+  graduation: "🎓",
+  sympathy: "🕊️",
+  christmas: "🎄",
+  "new-year": "🎆",
+  thanksgiving: "🦃",
+  diwali: "🪔",
+  dussehra: "🏹",
+};
+
+const OCCASION_LABELS: Record<string, string> = {
+  anniversary: "Anniversary",
+  valentine: "Valentine's Day",
+  wedding: "Wedding",
+  birthday: "Birthday",
+  "thank-you": "Thank You",
+  congratulations: "Congratulations",
+  seasonal: "Seasonal",
+  "baby-shower": "Baby Shower",
+  graduation: "Graduation",
+  sympathy: "Sympathy",
+  christmas: "Christmas",
+  "new-year": "New Year",
+  thanksgiving: "Thanksgiving",
+  diwali: "Diwali",
+  dussehra: "Dussehra",
+};
+
+// Build the flat search index from TEMPLATES
+const buildSearchIndex = (): SearchItem[] => {
+  const items: SearchItem[] = [];
+
+  Object.entries(TEMPLATES).forEach(([slug, templates]) => {
+    const label = OCCASION_LABELS[slug] ?? slug;
+    const emoji = OCCASION_EMOJIS[slug] ?? "🎴";
+
+    // Add the occasion itself
+    items.push({
+      type: "occasion",
+      occasionSlug: slug,
+      occasionLabel: label,
+      href: `/occasions/${slug}`,
+      emoji,
+    });
+
+    // Add each template under that occasion
+    Object.values(templates).forEach((template) => {
+      items.push({
+        type: "template",
+        occasionSlug: slug,
+        occasionLabel: label,
+        id: template.id,
+        name: template.name,
+        description: template.description,
+        price: template.price,
+        href: `/occasions/${slug}?template=${template.id}`,
+        emoji,
+      });
+    });
+  });
+
+  return items;
+};
+
+const SEARCH_INDEX = buildSearchIndex();
+
+// Popular occasions to show when query is empty
+const POPULAR_OCCASIONS = [
+  { slug: "birthday", label: "Birthday", emoji: "🎂" },
+  { slug: "anniversary", label: "Anniversary", emoji: "💍" },
+  { slug: "wedding", label: "Wedding", emoji: "💒" },
+  { slug: "valentine", label: "Valentine's Day", emoji: "❤️" },
+  { slug: "graduation", label: "Graduation", emoji: "🎓" },
+  { slug: "thank-you", label: "Thank You", emoji: "🙏" },
+  { slug: "baby-shower", label: "Baby Shower", emoji: "🍼" },
+  { slug: "congratulations", label: "Congratulations", emoji: "🎉" },
 ];
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function SearchModal() {
   const { isSearchOpen, setSearchOpen } = useStore();
   const [query, setQuery] = useState("");
+  const [focused, setFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
-  // Close on ESC key
+  // Filter results based on query
+  const results =
+    query.trim().length >= 1
+      ? SEARCH_INDEX.filter((item) => {
+          const q = query.toLowerCase();
+          return (
+            item.occasionLabel.toLowerCase().includes(q) ||
+            item.occasionSlug.toLowerCase().includes(q) ||
+            item.name?.toLowerCase().includes(q) ||
+            item.description?.toLowerCase().includes(q)
+          );
+        }).slice(0, 8) // Cap at 8 results
+      : [];
+
+  const occasionResults = results.filter((r) => r.type === "occasion");
+  const templateResults = results.filter((r) => r.type === "template");
+
+  // Close on ESC
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSearchOpen(false);
+      if (e.key === "Escape") handleClose();
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
+
+  // Focus input when modal opens
+  useEffect(() => {
+    if (isSearchOpen) {
+      setTimeout(() => inputRef.current?.focus(), 100);
+    } else {
+      setQuery("");
+    }
+  }, [isSearchOpen]);
+
+  const handleClose = useCallback(() => {
+    setSearchOpen(false);
+    setQuery("");
   }, [setSearchOpen]);
+
+  const handleNavigate = useCallback(
+    (href: string) => {
+      router.push(href);
+      handleClose();
+    },
+    [router, handleClose],
+  );
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (results.length > 0) {
+      handleNavigate(results[0].href);
+    } else if (query.trim()) {
+      handleNavigate(`/occasions?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -52,93 +181,219 @@ export default function SearchModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-md"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[200] flex flex-col items-center"
+          style={{
+            background: "rgba(255,255,255,0.92)",
+            backdropFilter: "blur(20px)",
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) handleClose();
+          }}
         >
-          <div className="container mx-auto px-4 pt-20 flex flex-col items-center">
-            <button
-              onClick={() => setSearchOpen(false)}
-              className="absolute top-8 right-8 p-3 hover:bg-muted rounded-full transition-colors"
-            >
-              <X className="w-8 h-8" />
-            </button>
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            className="absolute top-6 right-6 p-2.5 rounded-full bg-black/5 hover:bg-black/10 transition-colors"
+            aria-label="Close search"
+          >
+            <X className="w-5 h-5 text-foreground/70" />
+          </button>
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="w-full max-w-3xl"
-            >
-              <div className="relative mb-12">
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-8 h-8 text-muted-foreground" />
-                <input
-                  autoFocus
-                  type="text"
-                  placeholder="Search for cards, occasions..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="w-full bg-muted border-none rounded-[2rem] py-8 pl-20 pr-10 text-2xl focus:ring-2 focus:ring-primary/20 outline-none transition-all shadow-xl"
-                />
-              </div>
+          <motion.div
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="w-full max-w-2xl px-4 mt-20 flex flex-col"
+          >
+            {/* Search label */}
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              Find the perfect card
+            </p>
 
-              {/* Suggestions */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div>
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-6">
-                    Popular Searches
-                  </h3>
-                  <div className="flex flex-wrap gap-3">
-                    {[
-                      "Birthday",
-                      "Wedding",
-                      "Love",
-                      "Christmas",
-                      "Thank You",
-                    ].map((tag) => (
+            {/* Search box */}
+            <form onSubmit={handleSubmit} className="relative">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Search occasions, templates..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                className="w-full bg-white border-2 border-border rounded-full py-4 pl-14 pr-14 text-lg font-medium placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-all shadow-xl shadow-black/5"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-muted-foreground hover:bg-muted transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </form>
+
+            {/* Results dropdown */}
+            <AnimatePresence mode="wait">
+              {query.trim().length >= 1 ? (
+                <motion.div
+                  key="results"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.15 }}
+                  className="mt-3 bg-white rounded-2xl border border-border shadow-2xl overflow-hidden"
+                >
+                  {results.length === 0 ? (
+                    <div className="py-10 text-center">
+                      <p className="text-lg font-semibold text-foreground/60">
+                        No results for &ldquo;{query}&rdquo;
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Try searching for &ldquo;birthday&rdquo; or
+                        &ldquo;anniversary&rdquo;
+                      </p>
                       <Link
-                        key={tag}
-                        href={`/occasions/${tag.toLowerCase()}`}
-                        onClick={() => setSearchOpen(false)}
-                        className="px-6 py-3 bg-muted hover:bg-primary hover:text-white rounded-full text-sm font-medium transition-all"
+                        href="/occasions"
+                        onClick={handleClose}
+                        className="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold text-primary hover:underline"
                       >
-                        {tag}
+                        Browse all occasions{" "}
+                        <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-6">
-                    Suggestions
-                  </h3>
-                  <div className="space-y-4">
-                    {SUGGESTIONS.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={`/product/${item.id}`}
-                        onClick={() => setSearchOpen(false)}
-                        className="flex items-center gap-4 p-3 rounded-2xl hover:bg-muted transition-colors group"
-                      >
-                        <div className="relative w-16 h-16 rounded-xl overflow-hidden aspect-square">
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            ${item.price}
+                    </div>
+                  ) : (
+                    <div>
+                      {/* Occasion hits */}
+                      {occasionResults.length > 0 && (
+                        <div>
+                          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground px-5 pt-4 pb-2">
+                            Occasions
                           </p>
+                          {occasionResults.map((item) => (
+                            <button
+                              key={item.occasionSlug}
+                              onClick={() => handleNavigate(item.href)}
+                              className="w-full flex items-center gap-3.5 px-5 py-3 hover:bg-primary/5 transition-colors text-left group"
+                            >
+                              <span className="text-2xl w-9 h-9 flex items-center justify-center bg-primary/10 rounded-xl shrink-0">
+                                {item.emoji}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                                  {item.occasionLabel}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  Browse all templates
+                                </p>
+                              </div>
+                              <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" />
+                            </button>
+                          ))}
                         </div>
-                        <ArrowRight className="w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
+                      )}
+
+                      {/* Template hits */}
+                      {templateResults.length > 0 && (
+                        <div
+                          className={
+                            occasionResults.length > 0
+                              ? "border-t border-border/60"
+                              : ""
+                          }
+                        >
+                          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground px-5 pt-4 pb-2">
+                            Templates
+                          </p>
+                          {templateResults.map((item) => (
+                            <button
+                              key={item.id}
+                              onClick={() => handleNavigate(item.href)}
+                              className="w-full flex items-center gap-3.5 px-5 py-3 hover:bg-primary/5 transition-colors text-left group"
+                            >
+                              <span className="text-xl w-9 h-9 flex items-center justify-center bg-muted rounded-xl shrink-0">
+                                {item.emoji}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                                  {item.name}
+                                </p>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-primary bg-primary/10 rounded-full px-2 py-0.5">
+                                    <Tag className="w-2.5 h-2.5" />
+                                    {item.occasionLabel}
+                                  </span>
+                                  {item.price !== undefined && (
+                                    <span className="text-xs text-muted-foreground">
+                                      ${item.price.toFixed(2)}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all" />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* View all link */}
+                      <div className="border-t border-border/60 px-5 py-3">
+                        <Link
+                          href={`/occasions?q=${encodeURIComponent(query)}`}
+                          onClick={handleClose}
+                          className="flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                        >
+                          <Search className="w-3.5 h-3.5" />
+                          See all results for &ldquo;{query}&rdquo;
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              ) : (
+                /* Empty state: popular occasions */
+                <motion.div
+                  key="popular"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="mt-8"
+                >
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">
+                    Popular Occasions
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {POPULAR_OCCASIONS.map((occasion) => (
+                      <Link
+                        key={occasion.slug}
+                        href={`/occasions/${occasion.slug}`}
+                        onClick={handleClose}
+                        className="flex flex-col items-center gap-2.5 p-4 bg-white rounded-2xl border border-border hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-0.5 transition-all group cursor-pointer"
+                      >
+                        <span className="text-3xl">{occasion.emoji}</span>
+                        <span className="text-sm font-semibold text-foreground/80 group-hover:text-primary transition-colors text-center leading-tight">
+                          {occasion.label}
+                        </span>
                       </Link>
                     ))}
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+
+                  <Link
+                    href="/occasions"
+                    onClick={handleClose}
+                    className="mt-5 flex items-center justify-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    Browse all occasions <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

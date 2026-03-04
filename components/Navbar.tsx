@@ -61,15 +61,15 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <Image
-            src="/logo.png"
+            src="/logo-horizontal.png"
             alt="Joy Greetly"
-            width={32}
-            height={32}
-            className="w-8 h-8 object-contain"
+            width={100}
+            height={50}
+            className="w-24 object-contain"
           />
-          <span className="font-heading font-bold text-xl tracking-tight hidden sm:block text-foreground">
+          {/* <span className="font-heading font-bold text-xl tracking-tight hidden sm:block text-foreground">
             Joy<span className="text-primary">Greetly</span>
-          </span>
+          </span> */}
         </Link>
 
         {/* Desktop Nav */}
