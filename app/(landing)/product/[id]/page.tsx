@@ -16,21 +16,78 @@ import {
   Edit3,
   Eye,
   ShoppingCart,
+  Loader2,
 } from "lucide-react";
 import { TEMPLATES, TemplateMetadata } from "@/lib/data/template";
 import { TEMPLATE_COMPONENTS } from "@/components/templates";
 import { useStore } from "@/store/useStore";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
+import api from "@/lib/api";
 
 export default function ProductPage() {
   const params = useParams();
   const id = params.id as string;
+  const router = useRouter();
+  const { user } = useAuthStore();
   const { addToCart } = useStore();
 
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [copying, setCopying] = useState(false);
   const [activeTab, setActiveTab] = useState<"preview" | "customize">(
     "preview",
   );
+  const [isSaving, setIsSaving] = useState(false);
+  const [showConfirmSave, setShowConfirmSave] = useState(false);
+
+  const handleShareClick = () => {
+    if (!user) {
+      router.push("/login?redirect=" + window.location.pathname);
+      return;
+    }
+    setShowConfirmSave(true);
+  };
+
+  const saveAndGenerateLink = async () => {
+    setIsSaving(true);
+    try {
+      // Save card to backend
+      const response = await api.post("/cards", {
+        template_id: id,
+        title: productData?.name || "Custom Card",
+        description: productData?.description || "",
+        image_url: productData?.image || "",
+        occasion: productData?.category || "",
+        price: productData?.price || 0,
+        custom_data: JSON.stringify(customData),
+      });
+
+      const cardId = response.data.id;
+      const url = `${window.location.protocol}//${window.location.host}/preview/${cardId}`;
+      setShareUrl(url);
+      setShowConfirmSave(false);
+    } catch (error) {
+      console.error("Failed to save and share card:", error);
+      // Fallback
+      const shareData = { id: id, fields: customData };
+      const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
+      const url = `${window.location.protocol}//${window.location.host}/preview/${encoded}`;
+      setShareUrl(url);
+      setShowConfirmSave(false);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    if (shareUrl) {
+      navigator.clipboard.writeText(shareUrl);
+      setCopying(true);
+      setTimeout(() => setCopying(false), 2000);
+    }
+  };
 
   // Find product in TEMPLATES
   const productData = useMemo(() => {
@@ -321,6 +378,106 @@ export default function ProductPage() {
               {/* Subtle shine effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shine" />
             </button>
+          </div>
+
+          <div className="mt-8">
+            <button
+              onClick={handleShareClick}
+              disabled={isSaving || !!shareUrl}
+              className="w-full py-5 rounded-[1.5rem] bg-white border-2 border-primary/20 text-primary font-bold text-lg flex justify-center items-center gap-3 hover:bg-primary/5 hover:border-primary/40 transition-all disabled:opacity-50"
+            >
+              {isSaving ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Share2 className="w-5 h-5" />
+              )}
+              {shareUrl
+                ? "Preview Link Generated"
+                : "Generate & Share Preview Link"}
+            </button>
+
+            <AnimatePresence>
+              {showConfirmSave && !shareUrl && (
+                <motion.div
+                  key="confirm-save"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="mt-6 p-8 bg-primary/5 rounded-[2.5rem] border-2 border-primary/10 shadow-xl"
+                >
+                  <div className="flex flex-col items-center text-center gap-4">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Check className="w-8 h-8 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-black tracking-tight">
+                      Save to your collection?
+                    </h3>
+                    <p className="text-sm text-muted-foreground font-medium max-w-[280px]">
+                      Generating a link will save this customized card to your
+                      account history so you can manage it later.
+                    </p>
+                    <div className="flex gap-3 w-full mt-2">
+                      <button
+                        onClick={() => setShowConfirmSave(false)}
+                        className="flex-1 py-4 px-6 rounded-2xl bg-white border border-black/5 font-bold text-sm hover:bg-muted transition-all"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={saveAndGenerateLink}
+                        disabled={isSaving}
+                        className="flex-[2] py-4 px-6 rounded-2xl bg-primary text-white font-bold text-sm hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2"
+                      >
+                        {isSaving ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Share2 className="w-4 h-4" />
+                        )}
+                        Save & Generate Link
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {shareUrl && (
+                <motion.div
+                  key="share-url"
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: "auto", marginTop: 24 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  className="bg-primary/5 rounded-3xl p-6 border border-primary/10 overflow-hidden"
+                >
+                  <p className="text-sm font-bold text-primary/80 mb-3 ml-1 uppercase tracking-widest">
+                    Sharable Preview Link
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={shareUrl}
+                      className="flex-1 bg-white border border-primary/10 rounded-xl px-4 py-3 text-sm font-medium outline-none"
+                    />
+                    <button
+                      onClick={copyToClipboard}
+                      className="px-6 rounded-xl bg-primary text-white font-bold text-sm hover:bg-primary/90 transition-all flex items-center gap-2"
+                    >
+                      {copying ? (
+                        <>
+                          <Check className="w-4 h-4" /> Copied
+                        </>
+                      ) : (
+                        "Copy"
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-primary/60 mt-3 font-medium italic">
+                    * Anyone with this link can view your customized card
+                    preview.
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       </div>

@@ -26,8 +26,8 @@ export default function Home() {
           category: category
             .replace(/-/g, " ")
             .replace(/\b\w/g, (c) => c.toUpperCase()),
-          isNew: true,
-          isBestseller: Math.random() > 0.7, // Randomly mark some as bestsellers for variety
+          isNew: t.isNew,
+          isBestseller: t.isBestseller,
         });
       }
     }

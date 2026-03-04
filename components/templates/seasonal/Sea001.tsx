@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Snowflake, Cloud, Sparkles } from "lucide-react";
 
@@ -12,6 +13,12 @@ export default function Sea001({
   season = "Winter",
   message = "Wishing you warmth, peace, and many joyful moments this season.",
 }: Sea001Props) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -20,30 +27,31 @@ export default function Sea001({
     >
       {/* Snowfall background animation */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              y: [0, 600],
-              x: [0, Math.sin(i) * 50, 0],
-              rotate: [0, 360],
-              opacity: [0, 0.8, 0.4, 0],
-            }}
-            transition={{
-              duration: 8 + Math.random() * 6,
-              repeat: Infinity,
-              delay: i * 0.4,
-              ease: "linear",
-            }}
-            className="absolute"
-            style={{
-              top: `${Math.random() * 20}%`,
-              left: `${Math.random() * 100}%`,
-            }}
-          >
-            <Snowflake className="w-4 h-4 text-white/40" />
-          </motion.div>
-        ))}
+        {isMounted &&
+          [...Array(15)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                y: [0, 600],
+                x: [0, Math.sin(i) * 50, 0],
+                rotate: [0, 360],
+                opacity: [0, 0.8, 0.4, 0],
+              }}
+              transition={{
+                duration: 8 + Math.random() * 6,
+                repeat: Infinity,
+                delay: i * 0.4,
+                ease: "linear",
+              }}
+              className="absolute"
+              style={{
+                top: `${Math.random() * 20}%`,
+                left: `${Math.random() * 100}%`,
+              }}
+            >
+              <Snowflake className="w-4 h-4 text-white/40" />
+            </motion.div>
+          ))}
       </div>
 
       {/* Top Banner section */}

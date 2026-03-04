@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Baby, Stars, Cloud } from "lucide-react";
 
@@ -18,6 +19,12 @@ export default function Baby001({
   time = "2:00 PM",
   location = "The Tea Garden, Elmwood",
 }: Baby001Props) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -26,28 +33,29 @@ export default function Baby001({
     >
       {/* Soft Floating Circles Background Animation */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              y: [0, -40, 0],
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.6, 0.3],
-            }}
-            transition={{
-              duration: 5 + i,
-              repeat: Infinity,
-              delay: i * 0.7,
-            }}
-            className={`absolute rounded-full pointer-events-none ${i % 2 === 0 ? "bg-pink-300" : "bg-blue-300"}`}
-            style={{
-              width: `${20 + i * 10}px`,
-              height: `${20 + i * 10}px`,
-              top: `${Math.random() * 80}%`,
-              left: `${Math.random() * 80}%`,
-            }}
-          />
-        ))}
+        {isMounted &&
+          [...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                y: [0, -40, 0],
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 5 + i,
+                repeat: Infinity,
+                delay: i * 0.7,
+              }}
+              className={`absolute rounded-full pointer-events-none ${i % 2 === 0 ? "bg-pink-300" : "bg-blue-300"}`}
+              style={{
+                width: `${20 + i * 10}px`,
+                height: `${20 + i * 10}px`,
+                top: `${Math.random() * 80}%`,
+                left: `${Math.random() * 80}%`,
+              }}
+            />
+          ))}
       </div>
 
       {/* Top Banner section */}

@@ -5,13 +5,24 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Mail, Lock, Chrome } from "lucide-react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import api from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
+import api from "@/lib/api";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
-  const setUser = useAuthStore((state) => state.setUser);
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
+  const { user, setUser } = useAuthStore();
+
+  useEffect(() => {
+    if (user) {
+      router.push(redirect || (user.role === "admin" ? "/admin" : "/"));
+    }
+  }, [user, router, redirect]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +37,10 @@ export default function LoginPage() {
     try {
       const response = await api.post("/auth/login", { email, password });
       setUser(response.data.user);
-      if (response.data.user?.role === "admin") {
+
+      if (redirect) {
+        router.push(redirect);
+      } else if (response.data.user?.role === "admin") {
         router.push("/admin");
       } else {
         router.push("/");
@@ -147,5 +161,19 @@ export default function LoginPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

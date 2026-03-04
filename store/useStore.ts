@@ -30,11 +30,21 @@ interface StoreState {
   // Search State
   isSearchOpen: boolean;
   setSearchOpen: (isOpen: boolean) => void;
+
+  // User State
+  user: { name: string; email: string } | null;
+  login: (userData: { name: string; email: string }) => void;
+  logout: () => void;
 }
 
 export const useStore = create<StoreState>()(
   persist(
     (set, get) => ({
+      // User implementation
+      user: null,
+      login: (userData) => set({ user: userData }),
+      logout: () => set({ user: null }),
+
       // Cart implementation
       cart: [],
       addToCart: (product) =>

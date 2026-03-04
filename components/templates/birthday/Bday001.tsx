@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Cake, Sparkle, Stars } from "lucide-react";
 
@@ -14,6 +15,12 @@ export default function Bday001({
   age = 25,
   message = "Hope your day is as amazing as you are! Wishing you the best year yet.",
 }: Bday001Props) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -22,33 +29,34 @@ export default function Bday001({
     >
       {/* Confetti Background animation */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ y: -100, rotate: 0 }}
-            animate={{
-              y: [0, 600],
-              rotate: [0, 360],
-              x: [0, Math.sin(i) * 100],
-              opacity: [0, 1, 0.5, 0],
-            }}
-            transition={{
-              duration: 6 + Math.random() * 4,
-              repeat: Infinity,
-              delay: Math.random() * 10,
-              ease: "linear",
-            }}
-            className="absolute"
-            style={{
-              top: `${Math.random() * 10}%`,
-              left: `${Math.random() * 100}%`,
-            }}
-          >
-            <div
-              className={`w-3 h-3 rounded-sm ${["bg-pink-400", "bg-blue-400", "bg-yellow-400", "bg-teal-400"][i % 4]}`}
-            />
-          </motion.div>
-        ))}
+        {isMounted &&
+          [...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ y: -100, rotate: 0 }}
+              animate={{
+                y: [0, 600],
+                rotate: [0, 360],
+                x: [0, Math.sin(i) * 100],
+                opacity: [0, 1, 0.5, 0],
+              }}
+              transition={{
+                duration: 6 + Math.random() * 4,
+                repeat: Infinity,
+                delay: Math.random() * 10,
+                ease: "linear",
+              }}
+              className="absolute"
+              style={{
+                top: `${Math.random() * 10}%`,
+                left: `${Math.random() * 100}%`,
+              }}
+            >
+              <div
+                className={`w-3 h-3 rounded-sm ${["bg-pink-400", "bg-blue-400", "bg-yellow-400", "bg-teal-400"][i % 4]}`}
+              />
+            </motion.div>
+          ))}
       </div>
 
       {/* Top Banner section */}

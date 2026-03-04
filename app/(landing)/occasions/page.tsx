@@ -15,6 +15,11 @@ import {
   Baby,
   GraduationCap,
   Flower2,
+  Bell,
+  Stars,
+  Leaf,
+  Flame,
+  Sword,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -127,6 +132,65 @@ const CATEGORIES = [
     bgColor: "bg-[#f8fafc]", // Muted slate
     iconColor: "text-[#475569]",
     hoverColor: "group-hover:text-[#475569]",
+  },
+  {
+    name: "Christmas",
+    slug: "christmas",
+    description:
+      "Spread festive cheer with our magical holiday card collection.",
+    icon: Bell,
+    image:
+      "https://images.unsplash.com/photo-1544457070-4cd773b4d71e?auto=format&fit=crop&q=80&w=400&h=400",
+    bgColor: "bg-[#fef2f2]", // Light red
+    iconColor: "text-[#dc2626]",
+    hoverColor: "group-hover:text-[#dc2626]",
+  },
+  {
+    name: "New Year",
+    slug: "new-year",
+    description:
+      "Ring in a fresh start with sparkling resolutions and greetings.",
+    icon: Stars,
+    image:
+      "https://images.unsplash.com/photo-1467810563316-b5476525c0f9?auto=format&fit=crop&q=80&w=400&h=400",
+    bgColor: "bg-[#f5f3ff]", // Light violet
+    iconColor: "text-[#7c3aed]",
+    hoverColor: "group-hover:text-[#7c3aed]",
+  },
+  {
+    name: "Thanksgiving",
+    slug: "thanksgiving",
+    description: "Share your blessings and gratitude with family and friends.",
+    icon: Leaf,
+    image:
+      "https://images.unsplash.com/photo-1574044536225-1e3089d7b426?auto=format&fit=crop&q=80&w=400&h=400",
+    bgColor: "bg-[#fff7ed]", // Light orange
+    iconColor: "text-[#ea580c]",
+    hoverColor: "group-hover:text-[#ea580c]",
+  },
+  {
+    name: "Diwali",
+    slug: "diwali",
+    description:
+      "Light up the lives of your loved ones with festive Diwali cards.",
+    icon: Flame,
+    image:
+      "https://images.unsplash.com/photo-1605152276897-4f618f831968?auto=format&fit=crop&q=80&w=400&h=400",
+    bgColor: "bg-[#fffbeb]", // Light amber
+    iconColor: "text-[#b45309]",
+    hoverColor: "group-hover:text-[#b45309]",
+  },
+  {
+    name: "Dussehra",
+    slug: "dussehra",
+    description:
+      "Celebrate the victory of good over evil with our special cards.",
+    icon: Sword,
+    image:
+      "https://images.unsplash.com/photo-1561414927-6d86591d0c4f?auto=format&fit=crop&q=80&w=400&h=400",
+    bgColor: "bg-[#fff1f2]", // Light rose/crimson
+    iconColor: "text-[#be123c]",
+    hoverColor: "group-hover:text-[#be123c]",
   },
 ];
 

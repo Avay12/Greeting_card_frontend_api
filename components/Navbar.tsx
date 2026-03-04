@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
+import { useAuthStore } from "@/store/authStore";
+import { User as UserIcon, LogOut } from "lucide-react";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -16,7 +18,6 @@ const NAV_LINKS = [
   { href: "/occasions/wedding", label: "Wedding" },
   { href: "/occasions/birthday", label: "Birthday" },
   { href: "/occasions", label: "Occasions" },
-  { href: "/about", label: "About Us" },
 ];
 
 export default function Navbar() {
@@ -27,6 +28,7 @@ export default function Navbar() {
   const cart = useStore((state) => state.cart);
   const favorites = useStore((state) => state.favorites);
   const setSearchOpen = useStore((state) => state.setSearchOpen);
+  const { user, logout } = useAuthStore();
 
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -65,7 +67,7 @@ export default function Navbar() {
             height={32}
             className="w-8 h-8 object-contain"
           />
-          <span className="font-heading font-bold text-xl tracking-tight hidden sm:block">
+          <span className="font-heading font-bold text-xl tracking-tight hidden sm:block text-foreground">
             Joy<span className="text-primary">Greetly</span>
           </span>
         </Link>
@@ -127,6 +129,48 @@ export default function Navbar() {
             )}
           </Link>
 
+          {/* User Auth */}
+          {user ? (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="hidden lg:flex flex-col items-end group/profile"
+              >
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground leading-none mb-1 group-hover/profile:text-primary transition-colors">
+                  Profile
+                </span>
+                <span className="text-sm font-bold text-foreground leading-none group-hover/profile:text-primary transition-colors">
+                  {user.name}
+                </span>
+              </Link>
+              <div className="flex items-center gap-1.5 ml-1">
+                <Link
+                  href="/dashboard"
+                  className="p-2.5 bg-primary/5 hover:bg-primary/10 text-primary rounded-full transition-all border border-primary/10 shadow-sm"
+                  title="Your Dashboard"
+                >
+                  <UserIcon className="w-5 h-5" />
+                </Link>
+                <div className="w-[1px] h-6 bg-border mx-1" />
+                <button
+                  onClick={() => logout()}
+                  className="p-2.5 bg-white shadow-sm border border-black/5 rounded-full hover:shadow-md hover:bg-red-50 hover:text-red-500 transition-all group/logout"
+                  title="Logout"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden md:flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-bold rounded-full hover:bg-primary/90 hover:-translate-y-0.5 transition-all shadow-lg shadow-primary/20"
+            >
+              <UserIcon className="w-4 h-4" />
+              Login
+            </Link>
+          )}
+
           {/* Mobile Menu Toggle */}
           <button
             className="p-2 md:hidden text-foreground/80 hover:text-primary"
@@ -171,13 +215,36 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex gap-4 px-4 pt-4 border-t mt-2">
-                <button className="flex items-center gap-2 text-sm text-foreground/80 hover:text-primary">
-                  <Search className="w-4 h-4" /> Search
-                </button>
-                <button className="flex items-center gap-2 text-sm text-foreground/80 hover:text-primary">
-                  <Heart className="w-4 h-4" /> Favorites
-                </button>
+              <div className="flex flex-col gap-2 px-4 pt-4 border-t mt-2">
+                {user ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 text-sm font-bold text-primary py-2"
+                    >
+                      <UserIcon className="w-4 h-4" /> My Dashboard ({user.name}
+                      )
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 text-sm font-bold text-red-500 py-2 text-left"
+                    >
+                      <LogOut className="w-4 h-4" /> Logout
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 text-sm font-bold text-primary py-2"
+                  >
+                    <UserIcon className="w-4 h-4" /> Login / Register
+                  </Link>
+                )}
               </div>
             </nav>
           </motion.div>

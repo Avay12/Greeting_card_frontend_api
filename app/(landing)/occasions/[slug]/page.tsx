@@ -36,7 +36,8 @@ export default function CategoryPage() {
       image: template.image,
       component: template.component,
       category: categoryName,
-      isNew: true, // For now, mark templates as new
+      isNew: template.isNew,
+      isBestseller: template.isBestseller,
     }),
   );
 

@@ -9,6 +9,8 @@ export interface TemplateMetadata {
   price: number;
   fields: string[];
   defaults: Record<string, string | number>;
+  isNew?: boolean;
+  isBestseller?: boolean;
 }
 
 export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
@@ -26,6 +28,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
         date: "June 24, 2024",
         message: "Wishing you both a lifetime of love and happiness.",
       },
+      isBestseller: true,
     },
     "annv-002": {
       id: "annv-002",
@@ -166,6 +169,7 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
         classYear: "Class of 2024",
         message: "Dream big, work hard, and never stop growing.",
       },
+      isNew: true,
     },
   },
   sympathy: {
@@ -182,4 +186,9 @@ export const TEMPLATES: Record<string, Record<string, TemplateMetadata>> = {
       },
     },
   },
+  christmas: {},
+  "new-year": {},
+  thanksgiving: {},
+  diwali: {},
+  dussehra: {},
 };

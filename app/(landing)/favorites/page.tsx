@@ -27,7 +27,8 @@ export default function FavoritesPage() {
           category: category
             .replace(/-/g, " ")
             .replace(/\b\w/g, (c) => c.toUpperCase()),
-          isNew: true,
+          isNew: t.isNew,
+          isBestseller: t.isBestseller,
         });
       }
     }

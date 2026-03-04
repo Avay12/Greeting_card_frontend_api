@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Heart, Stars } from "lucide-react";
 
@@ -12,6 +13,12 @@ export default function Val001({
   name = "Beloved",
   message = "You're the center of my world, the highlight of my day, and the love of my life. Happy Valentine's Day.",
 }: Val001Props) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -20,30 +27,31 @@ export default function Val001({
     >
       {/* Dynamic Floating Hearts background */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              y: [0, -20, 0],
-              x: [0, Math.sin(i) * 10, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 4 + i,
-              repeat: Infinity,
-              delay: i * 0.5,
-            }}
-            className="absolute"
-            style={{
-              top: `${Math.random() * 80}%`,
-              left: `${Math.random() * 80}%`,
-            }}
-          >
-            <Heart
-              className={`w-${4 + i} h-${4 + i} fill-rose-300 text-rose-300`}
-            />
-          </motion.div>
-        ))}
+        {isMounted &&
+          [...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                y: [0, -20, 0],
+                x: [0, Math.sin(i) * 10, 0],
+                scale: [1, 1.1, 1],
+              }}
+              transition={{
+                duration: 4 + i,
+                repeat: Infinity,
+                delay: i * 0.5,
+              }}
+              className="absolute"
+              style={{
+                top: `${Math.random() * 80}%`,
+                left: `${Math.random() * 80}%`,
+              }}
+            >
+              <Heart
+                className={`w-${4 + i} h-${4 + i} fill-rose-300 text-rose-300`}
+              />
+            </motion.div>
+          ))}
       </div>
 
       <div className="relative z-10 space-y-4">

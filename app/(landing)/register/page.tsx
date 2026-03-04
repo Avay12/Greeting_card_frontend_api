@@ -4,14 +4,24 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Mail, Lock, User, Chrome } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import api from "@/lib/api";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { Loader2 } from "lucide-react";
+import api from "@/lib/api";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
-  const setUser = useAuthStore((state) => state.setUser);
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
+  const { user, setUser } = useAuthStore();
+
+  useEffect(() => {
+    if (user) {
+      router.push(redirect || "/dashboard");
+    }
+  }, [user, router, redirect]);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,7 +41,12 @@ export default function RegisterPage() {
         password,
       });
       setUser(response.data.user);
-      router.push("/admin");
+
+      if (redirect) {
+        router.push(redirect);
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err: any) {
       setError(err.response?.data?.error || "Registration failed");
     } finally {
@@ -165,5 +180,19 @@ export default function RegisterPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <RegisterForm />
+    </Suspense>
   );
 }
