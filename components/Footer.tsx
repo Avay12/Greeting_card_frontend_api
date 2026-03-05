@@ -1,7 +1,9 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Twitter, Instagram, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/ThemeProvider";
 
 const FOOTER_LINKS = [
   {
@@ -35,6 +37,7 @@ const FOOTER_LINKS = [
 ];
 
 export default function Footer() {
+  const { theme } = useTheme();
   return (
     <footer className="bg-muted text-muted-foreground pt-16 pb-8 border-t">
       <div className="container mx-auto px-4 md:px-8">
@@ -46,7 +49,7 @@ export default function Footer() {
               className="flex items-center gap-2 mb-4 group inline-flex"
             >
               <Image
-                src="/logo-horizontal.png"
+                src={`${theme === "dark" ? "/logo-dark-horizontal.png" : "/logo-horizontal.png"}`}
                 alt="Joy Greetly"
                 width={100}
                 height={50}

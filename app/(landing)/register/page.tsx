@@ -10,12 +10,14 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import api from "@/lib/api";
+import { useTheme } from "@/contexts/ThemeProvider";
 
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
   const { user, setUser } = useAuthStore();
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (user) {
@@ -74,7 +76,7 @@ function RegisterForm() {
           </Link>
           <div className="flex justify-center mb-6">
             <Image
-              src="/logo-horizontal.png"
+              src={`${theme === "dark" ? "/logo-dark-horizontal.png" : "/logo-horizontal.png"}`}
               alt="Joy Greetly"
               width={100}
               height={50}

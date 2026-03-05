@@ -14,9 +14,11 @@ import {
   ShoppingCart,
   Plus,
 } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeProvider";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { theme } = useTheme();
 
   const links = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -36,7 +38,7 @@ export function Sidebar() {
         <div className="p-6 pb-2">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Image
-              src="/logo.png"
+              src={`${theme === "dark" ? "/logo-dark.png" : "/logo.png"}`}
               alt="JoyGreetly Logo"
               width={32}
               height={32}

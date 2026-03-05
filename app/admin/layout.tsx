@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/contexts/ThemeProvider";
 
 export default function AdminLayout({
   children,
@@ -28,6 +29,7 @@ export default function AdminLayout({
   const pathname = usePathname();
   const { user, checkAuth, logout, isLoading } = useAuthStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     checkAuth();
@@ -81,7 +83,7 @@ export default function AdminLayout({
         <div className="h-16 flex items-center justify-between px-6 border-b border-border">
           <Link href="/admin" className="flex items-center gap-2">
             <Image
-              src="/logo.png"
+              src={`${theme === "dark" ? "/logo-dark.png" : "/logo.png"}`}
               alt="Logo"
               width={50}
               height={50}
@@ -163,7 +165,7 @@ export default function AdminLayout({
             </button>
             <Link href="/admin" className="flex items-center gap-2">
               <Image
-                src="/logo.png"
+                src={`${theme === "dark" ? "/logo-dark.png" : "/logo.png"}`}
                 alt="Logo"
                 width={24}
                 height={24}

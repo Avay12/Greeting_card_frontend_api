@@ -13,18 +13,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/contexts/ThemeProvider";
 
 export function MobileHeader() {
   const { user, logout } = useAuthStore();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const { theme } = useTheme();
 
   return (
     <div className="flex md:hidden w-full items-center justify-between h-14 bg-card border-b border-border px-4 fixed top-0 z-50">
       {/* Logo Left */}
       <Link href="/dashboard" className="flex items-center gap-2">
         <Image
-          src="/logo.png"
+          src={`${theme === "dark" ? "/logo-dark.png" : "/logo.png"}`}
           alt="JoyGreetly Logo"
           width={28}
           height={28}

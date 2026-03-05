@@ -11,6 +11,7 @@ import { useStore } from "@/store/useStore";
 import { useAuthStore } from "@/store/authStore";
 import { User as UserIcon, LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/contexts/ThemeProvider";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -25,6 +26,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { theme } = useTheme();
 
   const cart = useStore((state) => state.cart);
   const favorites = useStore((state) => state.favorites);
@@ -62,7 +64,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <Image
-            src="/logo-horizontal.png"
+            src={`${theme === "dark" ? "/logo-dark-horizontal.png" : "/logo-horizontal.png"}`}
             alt="Joy Greetly"
             width={100}
             height={50}
