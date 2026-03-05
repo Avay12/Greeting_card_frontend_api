@@ -1,13 +1,38 @@
+"use client";
 import { Header } from "@/components/dashboard/Header";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MobileHeader } from "@/components/dashboard/MobileHeader";
 import { MobileNav } from "@/components/dashboard/MobileNav";
+import { useAuthStore } from "@/store/authStore";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { user, checkAuth, logout, isLoading } = useAuthStore();
+  const router = useRouter();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  useEffect(() => {
+    if (!isLoading && user && user.role !== "user") {
+      router.push("/");
+    }
+  }, [user, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-background">
       {/* Mobile Header (Hidden on Desktop) */}

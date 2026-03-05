@@ -42,7 +42,7 @@ export default function AdminDashboardPage() {
     },
     {
       label: "Revenue",
-      value: `$${orders?.reduce((acc, order) => acc + (order.TotalAmount || 0), 0).toFixed(2)}`,
+      value: `$${orders?.reduce((acc, order) => acc + (order.total_amount || 0), 0).toFixed(2)}`,
       icon: Wand2,
       color: "text-primary",
       bg: "bg-primary/10",

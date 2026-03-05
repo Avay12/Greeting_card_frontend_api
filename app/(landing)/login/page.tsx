@@ -22,7 +22,14 @@ function LoginForm() {
 
   useEffect(() => {
     if (user) {
-      router.push(redirect || (user.role === "admin" ? "/admin" : "/"));
+      router.push(
+        redirect ||
+          (user.role === "admin"
+            ? "/admin"
+            : user.role === "user"
+              ? "/dashboard"
+              : "/"),
+      );
     }
   }, [user, router, redirect]);
 
@@ -44,6 +51,8 @@ function LoginForm() {
         router.push(redirect);
       } else if (response.data.user?.role === "admin") {
         router.push("/admin");
+      } else if (response.data.user?.role === "user") {
+        router.push("/dashboard");
       } else {
         router.push("/");
       }

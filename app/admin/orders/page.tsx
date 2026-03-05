@@ -66,39 +66,39 @@ export default function AdminOrdersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-medium text-foreground">
-                        {order.User?.name || "Unknown User"}
+                        {order.user?.name || "Unknown User"}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {order.User?.email}
+                        {order.user?.email}
                       </div>
                     </td>
                     <td className="px-6 py-4 font-semibold text-foreground">
-                      ${order.TotalAmount.toFixed(2)}
+                      ${order.total_amount.toFixed(2)}
                     </td>
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          order.Status === "paid" ||
-                          order.Status === "completed"
+                          order.status === "paid" ||
+                          order.status === "completed"
                             ? "bg-green-500/10 text-green-500"
                             : "bg-yellow-500/10 text-yellow-500"
                         }`}
                       >
-                        {order.Status === "paid" ||
-                        order.Status === "completed" ? (
+                        {order.status === "paid" ||
+                        order.status === "completed" ? (
                           <CheckCircle2 className="w-3 h-3" />
                         ) : (
                           <Clock className="w-3 h-3" />
                         )}
-                        {order.Status.charAt(0).toUpperCase() +
-                          order.Status.slice(1)}
+                        {order.status.charAt(0).toUpperCase() +
+                          order.status.slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      {order.Items?.length || 0} item(s)
+                      {order.items?.length || 0} item(s)
                     </td>
                     <td className="px-6 py-4 text-muted-foreground">
-                      {new Date(order.CreatedAt).toLocaleDateString()}
+                      {new Date(order.created_at).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}

@@ -79,7 +79,7 @@ export default function AdminUsersPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-muted-foreground">
-                      {new Date(user.CreatedAt).toLocaleDateString()}
+                      {new Date(user.created_at).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}

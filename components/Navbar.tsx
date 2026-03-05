@@ -143,9 +143,9 @@ export default function Navbar() {
                 href="/dashboard"
                 className="hidden lg:flex flex-col items-end group/profile"
               >
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground leading-none mb-1 group-hover/profile:text-primary transition-colors">
+                {/* <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground leading-none mb-1 group-hover/profile:text-primary transition-colors">
                   Profile
-                </span>
+                </span> */}
                 <span className="text-sm font-bold text-foreground leading-none group-hover/profile:text-primary transition-colors">
                   {user.name}
                 </span>

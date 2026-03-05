@@ -15,9 +15,9 @@ export default function CreateCardPage() {
 
   const [formData, setFormData] = useState({
     title: "",
-    category: "",
-    thumbnailUrl: "",
-    templateId: "",
+    occasion: "",
+    image_url: "",
+    template_id: "",
   });
 
   const categories = Object.keys(TEMPLATES).map((cat) => ({
@@ -25,9 +25,9 @@ export default function CreateCardPage() {
     label: cat.charAt(0).toUpperCase() + cat.slice(1).replace(/-/g, " "),
   }));
 
-  const availableTemplates = formData.category
+  const availableTemplates = formData.occasion
     ? Object.values(
-        TEMPLATES[formData.category as keyof typeof TEMPLATES] || {},
+        TEMPLATES[formData.occasion as keyof typeof TEMPLATES] || {},
       ).map((tpl) => ({
         value: tpl.id,
         label: tpl.name,
@@ -43,14 +43,14 @@ export default function CreateCardPage() {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-      // Reset templateId if category changes
-      ...(name === "category" ? { templateId: "" } : {}),
+      // Reset template_id if occasion changes
+      ...(name === "occasion" ? { template_id: "" } : {}),
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.category || !formData.templateId) {
+    if (!formData.occasion || !formData.template_id) {
       setError("Please select both a category and a template.");
       return;
     }
@@ -58,7 +58,7 @@ export default function CreateCardPage() {
     setLoading(true);
 
     try {
-      // Create card requires title, category, thumbnailUrl and templateId based on models
+      // All fields now match the backend models.Card JSON tags
       await api.post("/cards", formData);
       router.push("/admin"); // Redirect to dashboard on success
     } catch (err: any) {
@@ -116,8 +116,8 @@ export default function CreateCardPage() {
               </label>
               <CustomSelect
                 options={categories}
-                value={formData.category}
-                onChange={(val) => handleSelectChange("category", val)}
+                value={formData.occasion}
+                onChange={(val) => handleSelectChange("occasion", val)}
                 placeholder="Select category"
                 className="bg-muted"
               />
@@ -132,8 +132,8 @@ export default function CreateCardPage() {
               <ImagePlus className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/60 z-10" />
               <input
                 type="url"
-                name="thumbnailUrl"
-                value={formData.thumbnailUrl}
+                name="image_url"
+                value={formData.image_url}
                 onChange={handleChange}
                 placeholder="https://example.com/image.jpg"
                 required
@@ -148,10 +148,10 @@ export default function CreateCardPage() {
             </label>
             <CustomSelect
               options={availableTemplates}
-              value={formData.templateId}
-              onChange={(val) => handleSelectChange("templateId", val)}
+              value={formData.template_id}
+              onChange={(val) => handleSelectChange("template_id", val)}
               placeholder={
-                formData.category
+                formData.occasion
                   ? "Select a template"
                   : "Select a category first"
               }

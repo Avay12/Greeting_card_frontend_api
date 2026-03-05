@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAdminDataStore, AdminCard } from "@/store/adminDataStore";
+import { useAdminDataStore } from "@/store/adminDataStore";
+import { Card } from "@/types/api";
 import {
   LayoutTemplate,
   Loader2,
@@ -57,7 +58,7 @@ function parseCustomData(raw: string): Record<string, string> {
 
 export default function AdminCardsPage() {
   const { cards, fetchCards, isLoading, error } = useAdminDataStore();
-  const [viewingCard, setViewingCard] = useState<AdminCard | null>(null);
+  const [viewingCard, setViewingCard] = useState<Card | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState("");
 
@@ -65,7 +66,7 @@ export default function AdminCardsPage() {
     fetchCards();
   }, [fetchCards]);
 
-  const handleDelete = async (card: AdminCard) => {
+  const handleDelete = async (card: Card) => {
     if (!confirm(`Delete card "${card.title}"? This cannot be undone.`)) return;
     setDeletingId(card.id);
     setDeleteError("");
@@ -178,10 +179,10 @@ export default function AdminCardsPage() {
                         </div>
                         <div>
                           <p className="font-medium text-foreground text-xs truncate max-w-[120px]">
-                            {card.User?.name || `User #${card.user_id}`}
+                            {card.user?.name || `User #${card.user_id}`}
                           </p>
                           <p className="text-muted-foreground text-xs truncate max-w-[120px]">
-                            {card.User?.email || ""}
+                            {card.user?.email || ""}
                           </p>
                         </div>
                       </div>
@@ -342,34 +343,37 @@ export default function AdminCardsPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-foreground">
-                      {viewingCard.User?.name || `User #${viewingCard.user_id}`}
+                      {viewingCard.user?.name || `User #${viewingCard.user_id}`}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {viewingCard.User?.email || ""}
+                      {viewingCard.user?.email || ""}
                     </p>
                   </div>
                 </div>
-                viewingCard.custom_data !== "{}" && (
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                    Personalisation Fields
-                  </p>
-                  <div className="bg-muted rounded-xl p-3 space-y-2 border border-border/50">
-                    {Object.entries(
-                      parseCustomData(viewingCard.custom_data),
-                    ).map(([key, val]) => (
-                      <div key={key} className="flex items-start gap-2 text-sm">
-                        <span className="text-muted-foreground capitalize font-medium min-w-[80px]">
-                          {key}
-                        </span>
-                        <span className="text-foreground break-words">
-                          {String(val)}
-                        </span>
-                      </div>
-                    ))}
+                {viewingCard.custom_data !== "{}" && (
+                  <div>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                      Personalisation Fields
+                    </p>
+                    <div className="bg-muted rounded-xl p-3 space-y-2 border border-border/50">
+                      {Object.entries(
+                        parseCustomData(viewingCard.custom_data),
+                      ).map(([key, val]) => (
+                        <div
+                          key={key}
+                          className="flex items-start gap-2 text-sm"
+                        >
+                          <span className="text-muted-foreground capitalize font-medium min-w-[80px]">
+                            {key}
+                          </span>
+                          <span className="text-foreground break-words">
+                            {String(val)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                ) /* Custom Data */
+                )}
                 {/* Footer actions */}
                 <div className="flex justify-between items-center pt-2 border-t border-border mt-2">
                   <button

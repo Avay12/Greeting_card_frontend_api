@@ -1,48 +1,12 @@
 import { create } from "zustand";
 import api from "@/lib/api";
 
-export interface AdminUser {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  CreatedAt: string;
-}
-
-export interface AdminOrder {
-  id: number;
-  UserId: number;
-  User: AdminUser;
-  TotalAmount: number;
-  Status: string;
-  Items: any[];
-  CreatedAt: string;
-}
-
-// Matches the backend models.Card JSON output (snake_case JSON tags)
-export interface AdminCard {
-  id: number;
-  template_id: string;
-  title: string;
-  description: string;
-  image_url: string;
-  occasion: string;
-  price: number;
-  custom_data: string; // JSON string of personalisation fields
-  user_id: number;
-  User?: {
-    id: number;
-    name: string;
-    email: string;
-  };
-  created_at: string;
-  updated_at: string;
-}
+import { User, Order, Card } from "@/types/api";
 
 interface AdminDataState {
-  users: AdminUser[];
-  orders: AdminOrder[];
-  cards: AdminCard[];
+  users: User[];
+  orders: Order[];
+  cards: Card[];
   isLoading: boolean;
   error: string | null;
   fetchUsers: () => Promise<void>;

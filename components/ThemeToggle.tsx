@@ -22,11 +22,9 @@ export function ThemeToggle({ className, size = "md" }: ThemeToggleProps) {
       aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
       className={cn(
         "relative flex items-center justify-center rounded-full transition-all duration-300",
-        "border border-border hover:border-primary/40",
-        "bg-muted hover:bg-accent/30",
-        "hover:shadow-md hover:shadow-primary/10",
+        "text-foreground/80 hover:text-primary hover:bg-primary/5",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-        isSmall ? "h-8 w-8" : "h-9 w-9",
+        isSmall ? "h-8 w-8" : "h-10 w-10",
         className,
       )}
     >
@@ -41,10 +39,7 @@ export function ThemeToggle({ className, size = "md" }: ThemeToggleProps) {
             className="absolute inset-0 flex items-center justify-center"
           >
             <Sun
-              className={cn(
-                "text-pink-400",
-                isSmall ? "w-3.5 h-3.5" : "w-4 h-4",
-              )}
+              className={cn("text-pink-400", isSmall ? "w-4 h-4" : "w-5 h-5")}
             />
           </motion.span>
         ) : (
@@ -57,10 +52,7 @@ export function ThemeToggle({ className, size = "md" }: ThemeToggleProps) {
             className="absolute inset-0 flex items-center justify-center"
           >
             <Moon
-              className={cn(
-                "text-primary",
-                isSmall ? "w-3.5 h-3.5" : "w-4 h-4",
-              )}
+              className={cn("text-primary", isSmall ? "w-4 h-4" : "w-5 h-5")}
             />
           </motion.span>
         )}

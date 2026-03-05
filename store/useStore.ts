@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { User } from "@/types/api";
+
 export interface Product {
   id: string;
   name: string;
@@ -32,8 +34,8 @@ interface StoreState {
   setSearchOpen: (isOpen: boolean) => void;
 
   // User State
-  user: { name: string; email: string } | null;
-  login: (userData: { name: string; email: string }) => void;
+  user: User | null;
+  login: (userData: User) => void;
   logout: () => void;
 }
 

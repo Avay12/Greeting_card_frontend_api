@@ -2,13 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import api from "@/lib/api";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string | null;
-  provider: string | null;
-}
+import { User } from "@/types/api";
 
 interface AuthState {
   user: User | null;
