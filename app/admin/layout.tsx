@@ -35,12 +35,6 @@ export default function AdminLayout({
     checkAuth();
   }, [checkAuth]);
 
-  useEffect(() => {
-    if (!isLoading && user && user.role !== "admin") {
-      router.push("/");
-    }
-  }, [user, isLoading, router]);
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
