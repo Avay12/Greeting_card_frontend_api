@@ -12,6 +12,8 @@ interface AdminDataState {
   fetchUsers: () => Promise<void>;
   fetchOrders: () => Promise<void>;
   fetchCards: () => Promise<void>;
+  updateUser: (id: number, payload: { name: string; role: string; credit: number; is_active: boolean }) => Promise<void>;
+  deleteUser: (id: number) => Promise<void>;
 }
 
 export const useAdminDataStore = create<AdminDataState>((set) => ({
@@ -55,7 +57,6 @@ export const useAdminDataStore = create<AdminDataState>((set) => ({
     }
   },
 
-  // Admin endpoint returns ALL users' cards
   fetchCards: async () => {
     set({ isLoading: true, error: null });
     try {
@@ -71,5 +72,20 @@ export const useAdminDataStore = create<AdminDataState>((set) => ({
         isLoading: false,
       });
     }
+  },
+
+  updateUser: async (id, payload) => {
+    const response = await api.put(`/admin/users/${id}`, payload);
+    const updated: User = response.data.user;
+    set((state) => ({
+      users: state.users.map((u) => (u.id === id ? updated : u)),
+    }));
+  },
+
+  deleteUser: async (id) => {
+    await api.delete(`/admin/users/${id}`);
+    set((state) => ({
+      users: state.users.filter((u) => u.id !== id),
+    }));
   },
 }));

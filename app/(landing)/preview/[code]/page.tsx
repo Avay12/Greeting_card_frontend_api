@@ -8,6 +8,7 @@ import { ArrowLeft, Sparkles, ShoppingBag, Loader2 } from "lucide-react";
 import { TEMPLATES } from "@/lib/data/template";
 import { TEMPLATE_COMPONENTS } from "@/components/templates";
 import api from "@/lib/api";
+import { AudioPlayerBar } from "@/components/templates/AudioPicker";
 
 export default function PreviewPage() {
   const params = useParams();
@@ -161,6 +162,21 @@ export default function PreviewPage() {
                 )}
               </motion.div>
             </div>
+
+            {/* Audio player — shown if card has audio */}
+            {decodedData?.fields?.audioUrl && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+                className="max-w-[500px] mx-auto mt-6"
+              >
+                <AudioPlayerBar
+                  src={decodedData.fields.audioUrl}
+                  label={decodedData.fields.audioTrackName || "Audio Message"}
+                />
+              </motion.div>
+            )}
 
             {/* Info Message */}
             <div className="mt-16 text-center max-w-lg mx-auto bg-white/50 backdrop-blur-sm p-8 rounded-[2rem] border border-black/5">
