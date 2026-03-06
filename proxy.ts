@@ -1,9 +1,19 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+function getRoleFromToken(token: string): string | null {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = JSON.parse(atob(payload));
+    return decoded.role ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function proxy(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
-  const role = request.cookies.get("user-role")?.value;
+  const role = token ? getRoleFromToken(token) : null;
   const { pathname } = request.nextUrl;
 
   const isAuthPage =
